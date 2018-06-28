@@ -1,10 +1,10 @@
 const {MongoClient} = require('mongodb');
 const fs = MongoClient;
 
-const database = 'mongodb://localhost:27017';
-// const database = 'mongodb://lab123:lab123@ds127589.mlab.com:27589/weather_app';
+// const database = 'mongodb://localhost:27017';
+const database = 'mongodb://places123:places123@ds121321.mlab.com:21321/placesapp97';
 
-const appname='placesapp';
+const appname='placesapp97';
 const collectionname ='placeappcollection';
 const saveData = (newdata) => {
   return new Promise((resolve, reject) => {
