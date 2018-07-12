@@ -4,8 +4,10 @@ const hbs = require('hbs');
 const bodyParser = require('body-parser');
 const server = express();
 const path = require('path');
-const filemgr = require('./filemgr');
+// const filemgr = require('./filemgr');
+const Place = require('./Place');
 const port = process.env.PORT || 5000;
+
 
 server.use(bodyParser.urlencoded({extended: true}));
 server.set('view engine', 'hbs');
@@ -58,13 +60,13 @@ server.post('/getplaces',(req, res) => {
 
     filteredResults = extractData(response.data.results);
 
-    filemgr.saveData(filteredResults).then((result) => {
-      res.render('result.hbs');
-    }).catch((errorMessage) => {
-      console.log(errorMessage);
-    });
-
-    //res.status(200).send(filteredResults);
+    Place.insertMany(filteredResults)
+      .then((result) => {
+        res.status(200).send(result);
+      })
+      .catch((error) => {
+        res.status(400).send(error);
+      })
 
   }).catch((error) => {
     console.log(error);
@@ -73,24 +75,25 @@ server.post('/getplaces',(req, res) => {
 });
 
 
-server.get('/historical', (req, res) => {
-  filemgr.getAllData().then((result) => {
-    filteredResults = result;
-    console.log(filteredResults[0]);
-    res.render('historical.hbs');
-  }).catch((errorMessage) =>{
-    console.log(errorMessage);
-  });
+server.post('/historical', (req, res) => {
+  Place.find({})
+    .then((result) => {
+      res.status(200).send(result);
+    })
+    .catch((error) => {
+      res.status(400).send(error);
+    })
 });
 
 server.post('/delete', (req, res) => {
-  filemgr.deleteAll().then((result) => {
-    filteredResults = result;
-    res.render('historical.hbs');
-  }).catch((errorMessage) => {
-    console.log(errorMessage);
-  });
-})
+  Place.remove({})
+  .then((result) => {
+    res.status(200).send(result);
+  })
+  .catch((error) => {
+    res.status(400).send(error);
+  })
+});
 
 const extractData = (originalResults) => {
   var placesObj = {
